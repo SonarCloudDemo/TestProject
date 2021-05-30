@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const Wrapper = styled.div`
   padding: 20px;
@@ -45,7 +45,9 @@ const DetailsButton = styled.button`
   }
 `;
 
-export const PokemonCard = ({ name, image, price, click }) => (
+export const PokemonCard = ({
+  name, image, click, price,
+}) => (
   <Wrapper
     onClick={click}
   >
