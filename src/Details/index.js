@@ -71,7 +71,6 @@ export function Details() {
         stats={data.stats}
         abilities={data.abilities}
       />
-      <div> {id} <button type="button" >NEXT</button></div>
     </DetailsLayout>
   );
 }
