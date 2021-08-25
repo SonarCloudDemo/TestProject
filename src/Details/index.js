@@ -1,57 +1,61 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useState } from "react";
 import { useParams, useHistory } from "react-router-dom";
+import styled from "styled-components";
 import { DetailsLayout } from "./components/DetailsLayout";
 import { ImageSection } from "./components/ImageSection";
 import { ThumbnailSection } from "./components/ThumbnailSection";
 import { MetaSection } from "./components/MetaSection";
-import { Loader } from "../common/Loader";
+import { addToCart } from "../common/pokemonStorage";
 
+const CrossSellingSection = styled.div`
+  grid-area: crossselling;
+  margin-top: 24px;
+  width: 100%;
+  height: 50px;
+`;
 
-const useData = () => {
+export function Details() {
   const { id } = useParams();
   const [data, setData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState("");
 
+  const history = useHistory();
   useEffect(() => {
     fetch(`https://pokeapi.co/api/v2/pokemon/${id}`)
       .then((res) => res.json())
       .then((pokemonData) => {
         Promise.all(pokemonData.abilities.map((a) => fetch(a.ability.url)))
           .then((responses) => Promise.all(responses.map((res) => res.json())))
-          .then((abilityData) =>{
-            setData({ ...pokemonData, abilities: abilityData });
-            setIsLoading(false);
-          });
+          .then((abilityData) =>
+            setData({ ...pokemonData, abilities: abilityData })
+            
+          );
       });
   }, [id]);
-    return {
-      data,
-      isLoading,
-      id,
-    };
+
+  const handleAdd = () => {
+    addToCart({
+      img: data.sprites.other["official-artwork"].front_default,
+      name: data.name,
+      type: data.types[0].type.name,
+      price: data.base_experience,
+      quantity: 1,
+    });
+
+    history.push(`/shopping-cart`);
   };
-export function Details() {
-  const { data, isLoading, id } = useData();
-  const [selectedImage, setSelectedImage] = useState(null);
-  const history = useHistory();
-  const handleRouteClick = (Id) => {
-    if(Id>0){
-      history.push(`/pokemon/${Id}`);
-      setSelectedImage(null);
-    }
-  };
-  if (isLoading) {
-    return <Loader/>;
+
+  if (!data) {
+    return <span>Loading</span>;
   }
 
   return (
     <DetailsLayout>
       <ImageSection
-        leftClick={()=>handleRouteClick(id-1)}
-        rightClick={()=>handleRouteClick(+id+1)}
         alt={data.name}
-        src={selectedImage || data.sprites.other["official-artwork"].front_default
+        src={
+          selectedImage || data.sprites.other["official-artwork"].front_default
         }
       />
       <ThumbnailSection
@@ -70,7 +74,12 @@ export function Details() {
         price={data.base_experience}
         stats={data.stats}
         abilities={data.abilities}
+        onAddToCart={handleAdd}
       />
+
+      <CrossSellingSection>
+        {/* Exercise: Add cards with more pokemon */}
+      </CrossSellingSection>
     </DetailsLayout>
   );
 }

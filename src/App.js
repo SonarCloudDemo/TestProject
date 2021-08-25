@@ -6,6 +6,7 @@ import { Checkout } from "./Checkout/Checkout";
 import { Details } from "./Details";
 import { OrderCompleted } from "./OrderCompleted/OrderCompleted";
 import { ShoppingCart } from "./ShoppingCart/ShoppingCart";
+import {Congradulation} from "./Congratulation";
 
 const Title = styled.h1`
   font-size: 1.5em;
@@ -47,7 +48,7 @@ const Container = styled.div`
   overflow: hidden;
 `;
 
-const useData = () => {
+const App = () => {
   const [pokemons, setPokemons] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -72,24 +73,12 @@ const useData = () => {
       });
   }, []);
 
-  return {
-    pokemons,
-    isLoading,
-  };
-};
-
-const App = () => {
-  const { pokemons, isLoading } = useData();
-
   return (
     <Router>
       <NavBar>
         <ul>
           <li>
             <Link to="/">Home</Link>
-          </li>
-          <li>
-            <Link to="/shopping-cart">ShoppingCart</Link>
           </li>
           <li>
             <Link to="/order-completed">Order Completed</Link>
@@ -109,6 +98,9 @@ const App = () => {
           </Route>
           <Route path="/shopping-cart">
             <ShoppingCart />
+          </Route>
+          <Route path="/congratulation">
+            <Congradulation />
           </Route>
           <Route path="/checkout">
             <Checkout />
